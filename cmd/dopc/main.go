@@ -1,9 +1,6 @@
 package main
 
 import (
-	"DOPC/internal/clients"
-	"DOPC/internal/handlers"
-	"DOPC/internal/services"
 	"log"
 	"net/http"
 

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/AminMousaviUnity/DOPC/internal/models"
+	"github.com/AminMousaviUnity/dopc/internal/models"
 )
 
 // HomeAssignmentAPIClient defines the contract for fetching
