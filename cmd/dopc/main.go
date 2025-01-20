@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/yourname/dopc/internal/clients"
-	"github.com/yourname/dopc/internal/handlers"
-	"github.com/yourname/dopc/internal/services"
+	"github.com/AminMousaviUnity/dopc/internal/clients"
+	"github.com/AminMousaviUnity/dopc/internal/handlers"
+	"github.com/AminMousaviUnity/dopc/internal/services"
 )
 
 func main() {

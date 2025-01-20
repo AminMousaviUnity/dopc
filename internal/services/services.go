@@ -4,7 +4,6 @@ import (
 	"errors"
 	"math"
 
-
 	"github.com/AminMousaviUnity/dopc/internal/models"
 	"github.com/AminMousaviUnity/dopc/internal/clients"
 )
@@ -21,18 +20,18 @@ type DOPCService interface {
 }
 
 type dopcService struct {
-	apiClient HomeAssignmentAPIClient
+	apiClient clients.HomeAssignmentAPIClient
 }
 
 // NewDOPCService is a constructor that returns a DOPCService interface.
 // We inject the HomeAssignmentAPIClient so this service can fetch venue data.
-func NewDOPCService(apiClient HomeAssignmentAPIClient) DOPCService {
+func NewDOPCService(apiClient clients.HomeAssignmentAPIClient) DOPCService {
 	return &dopcService{
 		apiClient: apiClient,
 	}
 }
 
-func (s *dopsService) CalculatePrice(
+func (s *dopcService) CalculatePrice(
 	venueSlug string,
 	cartValue int,
 	userLat float64,
@@ -57,7 +56,7 @@ func (s *dopsService) CalculatePrice(
 
 	orderMinNoSurcharge := dynamicResp.VenueRaw.DeliverySpecs.OrderMinimumNoSrucharge
 	basePrice := dynamicResp.VenueRaw.DeliverySpecs.DeliveryPricing.BasePrice
-	distanceRanges := dynamicResp.VenueRaw.DeliverySpecs.DeliveryPricing.distanceRanges
+	distanceRanges := dynamicResp.VenueRaw.DeliverySpecs.DeliveryPricing.DistanceRanges
 
 	// 4. Calculate the distance between user & venue
 	distanceMeters := calculateHaversineDistance(userLat, userLon, venueLat, venueLon)
@@ -118,7 +117,7 @@ func calculateHaversineDistance(lat1, lon1, lat2, lon2 float64) int {
 // calculateDeliveryFee uses distanceRanges to find the correct range for `distance`
 // and calculates: basePrice + a + round(b * distance / 10).
 // If the distance is beyond the max allowed range, returns an error.
-func calculateDeliveryFee(distance int, basePrice int, ranges []domain.DistanceRange) (int, error) {
+func calculateDeliveryFee(distance int, basePrice int, ranges []models.DistanceRange) (int, error) {
     for _, dr := range ranges {
         // "max": 0 => means no delivery if distance >= dr.Min
         // Otherwise, the distance must fall between [dr.Min, dr.Max).
