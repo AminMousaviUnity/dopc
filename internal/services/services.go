@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"log"
 	"math"
 
 	"github.com/AminMousaviUnity/dopc/internal/clients"
@@ -132,7 +131,7 @@ func calculateDeliveryFee(distance int, basePrice int, ranges []models.DistanceR
 		} else {
 			if distance >= dr.Min && distance < dr.Max {
 				// We found our range
-                variableFee := int(math.Round(dr.B * float64(distance) / 10.0))
+				variableFee := int(math.Round(dr.B * float64(distance) / 10.0))
 				return basePrice + dr.A + variableFee, nil
 			}
 		}
