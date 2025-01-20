@@ -68,7 +68,7 @@ func (h *DeliveryOrderPriceHandler) HandleGetDeliveryOrderPrice(w http.ResponseW
 		userLon,
 	)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("delivey isn't possible"), http.StatusBadRequest)
+		http.Error(w, "delivery isn't possible", http.StatusBadRequest)
 	}
 
 	// 4. Return JSON

@@ -2,10 +2,11 @@ package services
 
 import (
 	"errors"
+	"log"
 	"math"
 
-	"github.com/AminMousaviUnity/dopc/internal/models"
 	"github.com/AminMousaviUnity/dopc/internal/clients"
+	"github.com/AminMousaviUnity/dopc/internal/models"
 )
 
 // DOPCService is the contract for our business logic.
@@ -92,51 +93,51 @@ func (s *dopcService) CalculatePrice(
 // calculateHaversineDistance returns the great-circle distance (in meters)
 // between two lat/lon points using the Haversine formula.
 func calculateHaversineDistance(lat1, lon1, lat2, lon2 float64) int {
-    // Earth’s radius in meters
-    const earthRadius = 6371000.0
+	// Earth’s radius in meters
+	const earthRadius = 6371000.0
 
-    // Convert degrees to radians
-    dLat := (lat2 - lat1) * math.Pi / 180.0
-    dLon := (lon2 - lon1) * math.Pi / 180.0
+	// Convert degrees to radians
+	dLat := (lat2 - lat1) * math.Pi / 180.0
+	dLon := (lon2 - lon1) * math.Pi / 180.0
 
-    rLat1 := lat1 * math.Pi / 180.0
-    rLat2 := lat2 * math.Pi / 180.0
+	rLat1 := lat1 * math.Pi / 180.0
+	rLat2 := lat2 * math.Pi / 180.0
 
-    // Haversine formula
-    a := math.Sin(dLat/2)*math.Sin(dLat/2) +
-        math.Cos(rLat1)*math.Cos(rLat2)*math.Sin(dLon/2)*math.Sin(dLon/2)
-    c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
+	// Haversine formula
+	a := math.Sin(dLat/2)*math.Sin(dLat/2) +
+		math.Cos(rLat1)*math.Cos(rLat2)*math.Sin(dLon/2)*math.Sin(dLon/2)
+	c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
 
-    // Distance in meters
-    distance := earthRadius * c
+	// Distance in meters
+	distance := earthRadius * c
 
-    // Round to nearest integer
-    return int(math.Round(distance))
+	// Round to nearest integer
+	return int(math.Round(distance))
 }
 
 // calculateDeliveryFee uses distanceRanges to find the correct range for `distance`
 // and calculates: basePrice + a + round(b * distance / 10).
 // If the distance is beyond the max allowed range, returns an error.
 func calculateDeliveryFee(distance int, basePrice int, ranges []models.DistanceRange) (int, error) {
-    for _, dr := range ranges {
-        // "max": 0 => means no delivery if distance >= dr.Min
-        // Otherwise, the distance must fall between [dr.Min, dr.Max).
+	for _, dr := range ranges {
+		// "max": 0 => means no delivery if distance >= dr.Min
+		// Otherwise, the distance must fall between [dr.Min, dr.Max).
 
-        if dr.Max == 0 {
-            // This indicates that if distance >= dr.Min, it's not deliverable
-            if distance >= dr.Min {
-                return 0, errors.New("delivery not possible (distance too large)")
-            }
-            // If distance < dr.Min, keep checking next range
-        } else {
-            if distance >= dr.Min && distance < dr.Max {
-                // We found our range
-                variableFee := int(math.Round(float64(dr.B) * float64(distance) / 10.0))
-                return basePrice + dr.A + variableFee, nil
-            }
-        }
-    }
+		if dr.Max == 0 {
+			// This indicates that if distance >= dr.Min, it's not deliverable
+			if distance >= dr.Min {
+				return 0, errors.New("delivery not possible (distance too large)")
+			}
+			// If distance < dr.Min, keep checking next range
+		} else {
+			if distance >= dr.Min && distance < dr.Max {
+				// We found our range
+                variableFee := int(math.Round(dr.B * float64(distance) / 10.0))
+				return basePrice + dr.A + variableFee, nil
+			}
+		}
+	}
 
-    // If no range matched, we assume it's out of range
-    return 0, errors.New("delivery not possible (no matching distance range)")
+	// If no range matched, we assume it's out of range
+	return 0, errors.New("delivery not possible (no matching distance range)")
 }

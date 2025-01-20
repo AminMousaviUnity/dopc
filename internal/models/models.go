@@ -35,9 +35,9 @@ type DeliveryPricing struct {
 }
 
 type DistanceRange struct {
-	Min  int    `json:"min"`
-	Max  int    `json:"max"`
-	A    int    `json:"a"`
-	B    int    `json:"b"`
-	Flag string `json:"flag"`
+	Min  int     `json:"min"`
+	Max  int     `json:"max"`
+	A    int     `json:"a"`
+	B    float64 `json:"b"`
+	Flag string  `json:"flag"`
 }
